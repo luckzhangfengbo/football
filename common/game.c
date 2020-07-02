@@ -1,56 +1,47 @@
-/*************************************************************************
-	> File Name: game.h
-	> Author: 
-	> Mail: 
-	> Created Time: 2020年06月02日 星期二 18时35分37秒
- ************************************************************************/
-
 #include "head.h"
-#include "game.h"
 
+//#define MAX 50 //Maximum number of users
 extern struct Map court;
-extern WINDOW *Football, *Message, *Help, *Score, *Write;
+extern WINDOW *Football, *Football_t, *Message, *Help, *Score, *Write;
+//extern char data_stream[20];
 int message_num = 0;
-WINDOW *create_newwin(int width, int height, int startx, int starty) {
-    //Create WINDOW
+
+
+
+WINDOW *create_newwin(int width, int heigth, int startx, int starty) {
     WINDOW *win;
-    win = newwin(height, width, starty, startx);
-    box(win, 0, 0);/*0 0是字符默认行列起始位置*/
-    wrefresh(win);/*刷新窗口缓冲，显示box*/
+    win = newwin(heigth, width, starty, startx);
+    box(win, 0, 0); //当我们创建了一个窗口之后却无法看见它,所以我们现在要做的就是让窗口显示出来。box()函数可以在已定义的窗口外围画上边框。
+    wrefresh(win);
     return win;
 }
 
-
-
-void destroy_win(WINDOW *win) {
-    //Destroy WINDOW
-
-    //delete line
+void destroy_win(WINDOW * win) {
     wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
     wrefresh(win);
     delwin(win);
 }
 
-
 void gotoxy(int x, int y) {
-    move(y , x);
+    move(y, x);
 }
 
-void gotoxy_putc(int x, int y,char c) {
+void gotoxy_putc(int x, int y, int c) {
     move(y, x);
-    addch(x);
-    move(LINES - 1, 1);
-    refresh();
-}
-void gotoxy_puts(int x, int y,char *c) {
-    move(y, x);
-    addstr(c);
+    addch(c);
     move(LINES - 1, 1);
     refresh();
 }
 
-void w_gotoxy_putc(WINDOW *win, int x, int y, char c) {
-    mvwaddch(win, y, x, c);
+void gotoxy_puts(int x, int y, char* s) {
+    move(y, x);
+    addstr(s);
+    move(LINES - 1, 1);
+    refresh();
+}
+
+void w_gotoxy_putc(WINDOW *win, int x, int y, int c){
+    mvwaddch(win, y, x, c);//移动到窗口指定位置打印字符
     move(LINES - 1, 1);
     wrefresh(win);
 }
@@ -64,49 +55,63 @@ void w_gotoxy_puts(WINDOW *win, int x, int y, char *s) {
 void initfootball() {
     initscr();
     clear();
-    if(!has_colors() || start_color() == ERR) {
+    if (!has_colors() || start_color() == ERR) {
         endwin();
-        fprintf(stderr, "终端不支持颜色！\n");
+        fprintf(stderr, "your terminal not surport color！\n");
+        exit(1);
     }
     init_pair(1, COLOR_GREEN, COLOR_BLACK);
     init_pair(2, COLOR_RED, COLOR_BLACK);
-    init_pair(3, COLOR_WHITE, COLOR_BLACK);    
+    init_pair(3, COLOR_WHITE, COLOR_BLACK);
     init_pair(4, COLOR_YELLOW, COLOR_BLACK);
-    init_pair(5, COLOR_CYAN, COLOR_BLACK);    
+    init_pair(5, COLOR_CYAN, COLOR_BLACK);
     init_pair(6, COLOR_BLUE, COLOR_BLACK);
-
-    Football=create_newwin(court.width, court.height, court.start.x, court.start.y);
-    WINDOW *Message_t=create_newwin(court.width, 7, court.start.x, court.start.y + court.height);
-    Message = subwin(Message_t, 5, court.width - 2, court.start.y + court.height + 1, court.start.x + 1);
+    init_pair(7, COLOR_BLACK, COLOR_GREEN);
+    init_pair(8, COLOR_BLACK, COLOR_RED);
+    init_pair(9, COLOR_BLACK, COLOR_WHITE);
+    init_pair(10, COLOR_BLACK, COLOR_YELLOW);
+    init_pair(11, COLOR_BLACK, COLOR_CYAN);
+    init_pair(12, COLOR_BLACK, COLOR_BLUE);
+    
+    //Football = create_newwin(court.width, court.heigth, court.start.x, court.start.y);
+    Football_t = create_newwin(court.width + 4, court.heigth + 2, court.start.x - 2, court.start.y - 1);
+    Football = subwin(Football_t, court.heigth, court.width, court.start.y, court.start.x);
+    box(Football, 0, 0);
+    WINDOW *Message_t = create_newwin(court.width + 4, 7, court.start.x - 2, court.start.y + 1 + court.heigth);
+    Message = subwin(Message_t, 5, court.width + 2, court.start.y + court.heigth + 2, court.start.x - 1);
     scrollok(Message, 1);
-    Help=create_newwin(20, court.height, court.start.x + court.width, court.start.y);
-    Score=create_newwin(20,  7, court.start.x + court.width, court.start.y + court.height);
-    Write=create_newwin(court.width + 20, 5, court.start.x, court.start.y + court.height + 7);
+    Help = create_newwin(20, court.heigth + 2, court.start.x + court.width + 2, court.start.y - 1);
+    Score = create_newwin(20, 7, court.start.x + 1 + court.width + 1, court.start.y + 2 + court.heigth - 1);
+    //WINDOW *Write_t = create_newwin(court.width + 20, 5, court.start.x, court.start.y + court.heigth + 7);
+    Write = create_newwin(court.width + 24, 5, court.start.x - 2, court.start.y + 1 + court.heigth + 7);
+    //Write = subwin(Write_t, 3, court.width + 20 - 2, court.start.y + court.heigth + 7 + 1, court.start.x + 1);
 }
 
 void *draw(void *arg) {
     initfootball();
-    while(1) {
+    while (1) {
         sleep(10);
     }
 }
 
-void show_message(WINDOW *win, struct User *user, char *msg, int type) {
+void show_message(WINDOW *win, struct User *user, char *msg,  int type) {  //某个窗口，这是谁User，内容，系统为1
     time_t time_now = time(NULL);
-    struct tm* tm= localtime(&time_now);
+    struct tm* tm = localtime(&time_now);
     char timestr[20] = {0};
     char username[80] = {0};
-    sprintf(timestr, "%02d:%02d:%02d ", tm->tm_hour, tm->tm_min, tm->tm_sec);
+    sprintf(timestr, "%02d:%02d:%02d", tm->tm_hour, tm->tm_min, tm->tm_sec);
     if (type) {
+        wattron(win,COLOR_PAIR(4));
         strcpy(username, "Server Info : ");
     } else {
-        if(user->team) 
-            wattron(win, COLOR_PAIR(6));
-        else 
+        if (user->team)
+            wattron(win ,COLOR_PAIR(6));
+        else
             wattron(win, COLOR_PAIR(2));
         sprintf(username, "%s : ", user->name);
     }
-    if(message_num < 4) {
+
+    if (message_num <= 4) {
         w_gotoxy_puts(win, 10, message_num, username);
         wattron(win, COLOR_PAIR(3));
         w_gotoxy_puts(win, 10 + strlen(username), message_num, msg);
@@ -123,8 +128,6 @@ void show_message(WINDOW *win, struct User *user, char *msg, int type) {
         w_gotoxy_puts(win, 1, message_num, timestr);
         message_num++;
     }
-
     wrefresh(win);
 }
-
 

@@ -9,7 +9,6 @@
 #define HEAD_H
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/epoll.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -19,16 +18,21 @@
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <stdbool.h>
-#include <pwd.h>
-#include <sys/wait.h>
 #include <signal.h>
-#include <string.h>
+#include <sys/wait.h>
+#include <sys/time.h>
 #include <poll.h>
 #include <sys/select.h>
 #include <errno.h>
-#include"./color.h"
-#include"./global.c"
+#include <sys/epoll.h>
+#include "./global.h"
+#include "./color.h"
+#include "./common.h"
 #include "./datatype.h"
-#include"./common.h"
+#include "./thread_pool.h"
+#include "./udp_epoll.h"
 #include <curses.h>
+#include "game.h"
+#include "show_data_stream.h"
+#include "show_strength.h"
 #endif
