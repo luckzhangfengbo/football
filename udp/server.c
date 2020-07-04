@@ -1,16 +1,10 @@
-/*************************************************************************
-	> File Name: server.c
-	> Author: 
-	> Mail: 
-	> Created Time: 2020年06月05日 星期五 09时02分28秒
- ************************************************************************/
-
-
 #include "../common/head.h"
-#include"../common/udp_server.h"
+#include "../common/color.h"
+#include "../common/udp_server.h"
+#include "../common/common.h"
 
 int main(int argc, char **argv) {
-    if (argc != 2) {
+    if (argc != 2) { 
         fprintf(stderr, "Usage: %s port!\n", argv[0]);
         exit(1);
     }
@@ -25,16 +19,16 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    recvfrom(sockfd, msg, sizeof(msg), 0, (struct sockaddr*)&client, &len);
+    recvfrom(sockfd, msg, sizeof(msg), 0, (struct sockaddr *)&client, &len);
 
-    printf("D: recv: %s\n", msg);
+    printf("D: recv : %s \n", msg);
 
-    if (connect(sockfd, (struct sockaddr *)&client, len) < 0) {
+    if (connect(sockfd, (struct sockaddr *)&client, len) < 0) { //将套接字与对应地址绑定，以后便可以直接用send，recv，并且实现了真正意义上的高并发
         perror("connect");
         exit(1);
     }
 
     send(sockfd, "Hello!", sizeof("Hello!"), 0);
-
+    
     return 0;
 }

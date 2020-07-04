@@ -1,11 +1,5 @@
-/*************************************************************************
-	> File Name: client.c
-	> Author: 
-	> Mail: 
-	> Created Time: 2020年06月05日 星期五 09时04分14秒
- ************************************************************************/
-
-
+#include "../common/color.h"
+#include "../common/common.h"
 #include "../common/head.h"
 #include "../common/udp_client.h"
 
@@ -26,17 +20,22 @@ int main(int argc, char **argv) {
     server.sin_port = htons(port);
     server.sin_addr.s_addr = inet_addr(ip);
 
-    if ((sockfd = socket_udp()) < 0) {
+    if ((sockfd = socket_udp()) < 0) { //创建了一个被动状态，可以接受udp信息
         perror("socket_udp");
         exit(1);
     }
 
+    if (connect(sockfd, (struct sockaddr *)&server, len) < 0) { //
+        perror("connect");
+    }
+
     sendto(sockfd, "hi", sizeof("hi"), 0, (struct sockaddr *)&server, len);
-
+    
     sleep(1);
-
+    
     recvfrom(sockfd, msg, sizeof(msg), 0, (struct sockaddr *)&server, &len);
 
-    printf("D : recv from server %s\n", msg);
+    printf("D : recv from server :%s \n", msg);
+
     return 0;
 }
